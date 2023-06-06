@@ -2,10 +2,11 @@ import React, { useState } from "react";
 
 export const ProductsContext = React.createContext({
   products: [],
+  toggleFav: (id) => {},
 });
 
 const ProductsProvider = (props) => {
-  const [productsList, setProducts] = useState([
+  const [productList, setProductList] = useState([
     {
       id: "p1",
       title: "Red Scarf",
@@ -32,11 +33,27 @@ const ProductsProvider = (props) => {
     },
   ]);
 
+  const toggleFavorite = (productId) => {
+    setProductList((currentProdList) => {
+      const prodIndex = currentProdList.findIndex((p) => p.id === productId);
+      const newFavStatus = !currentProdList[prodIndex].isFavorite;
+      const updatedProducts = [...currentProdList];
+      updatedProducts[prodIndex] = {
+        ...currentProdList[prodIndex],
+        isFavorite: newFavStatus,
+      };
+
+      return updatedProducts;
+    });
+  };
+
   return (
-    <ProductsContext.Provider value={{ products: productsList }}>
+    <ProductsContext.Provider
+      value={{ products: productList, toggleFav: toggleFavorite }}
+    >
       {props.children}
     </ProductsContext.Provider>
   );
 };
 
-export default ProductsProvider
+export default ProductsProvider;
